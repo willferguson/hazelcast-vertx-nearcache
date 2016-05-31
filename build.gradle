@@ -3,7 +3,7 @@ version '1.0'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -31,8 +31,18 @@ dependencies {
     compile("io.vertx:vertx-core:$vertxVersion")
     compile("io.vertx:vertx-rx-java:$vertxVersion")
     compile "io.vertx:vertx-hazelcast:$vertxVersion"
-    compile group: 'com.hazelcast', name: 'hazelcast-client', version: '3.5.2'
+    compile "com.hazelcast:hazelcast-cloud:3.6.1"
 
     compile("org.slf4j:slf4j-api:$slf4jVersion")
     compile("ch.qos.logback:logback-classic:$logbackVersion")
+}
+
+jar{
+    baseName = 'nearcache'
+    group = 'com.github.willferguson'
+    version = project.version
+    manifest {
+        attributes 'Main-Class': 'com.github.willferguson.nearcache.bootstrap.Bootstrap'
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }

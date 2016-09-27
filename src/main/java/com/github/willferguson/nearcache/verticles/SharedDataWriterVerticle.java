@@ -22,15 +22,17 @@ public class SharedDataWriterVerticle extends AbstractVerticle {
         //Periodically read the value and print.
         vertx.periodicStream(10000)
                 .toObservable()
-                .flatMap(timer -> vertx.sharedData().getClusterWideMapObservable(SharedDataKeys.MAP_NAME.getCacheKey()))
+                .flatMap(timer -> {
+                    return vertx.sharedData().getClusterWideMapObservable(SharedDataKeys.MAP_NAME.getCacheKey());
+                })
                 .flatMap(asyncMap -> {
                     int nextRandom = random.nextInt();
                     logger.info("Next random number is going to be {}", nextRandom);
-                    return asyncMap.putObservable(SharedDataKeys.MAP_KEY, nextRandom);
+                    return asyncMap.putObservable(SharedDataKeys.MAP_KEY.getCacheKey(), nextRandom);
                 })
                 .subscribe(
                         value -> {
-
+                            logger.info("Hello");
                         },
                         error -> logger.error("Error", error),
                         () -> logger.info("Added new random number to the map")

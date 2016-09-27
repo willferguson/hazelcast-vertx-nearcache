@@ -20,10 +20,12 @@ public class SharedDataReaderVerticle extends AbstractVerticle {
         vertx.periodicStream(1000)
                 .toObservable()
                 .flatMap(timer -> vertx.sharedData().getClusterWideMapObservable(SharedDataKeys.MAP_NAME.getCacheKey()))
-                .flatMap(asyncMap -> asyncMap.getObservable(SharedDataKeys.MAP_KEY))
+                .flatMap(asyncMap -> {
+                    return asyncMap.getObservable(SharedDataKeys.MAP_KEY.getCacheKey());
+                })
                 .subscribe(
                          value -> {
-                            logger.info("Getting value {} from shared map");
+                            logger.info("Getting value {} from shared map", value);
                         },
                         error -> logger.error("Error", error),
                         () -> logger.info("Done")
